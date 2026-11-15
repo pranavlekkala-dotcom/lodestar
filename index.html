@@ -1,7 +1,12 @@
 <html lang="en" translate="no">
 <meta charset="utf-8">
-<script>/* whole game: a fresh visit starts with the intro film + training simulation (prologue/), which returns here with ?from=training */
-if (!/[?&](from|ship|v)=/.test(location.search) && !navigator.webdriver) location.replace("prologue/index.html");</script>
+<meta name="description" content="Project Lodestar: an educational first-person space mission game by Rockets Built Wright.">
+<meta name="author" content="Rockets Built Wright: Aidan Ma, Thomas Heacock, Pranav Lekkala, Nathan Grondin, Collin Lee">
+<meta name="ai-disclosure" content="AI used: Claude (Anthropic, via Claude Code) for game code, Blender build scripts, mini-games, integration, dialogue drafts, testing, video editing, documentation and publishing; Piper neural text-to-speech for all in-game voices; ChatGPT for a teammate design handoff (content rebuilt). Full list: AI_USAGE.md">
+<meta name="generator" content="Hand-built with three.js; code written with Claude (Anthropic)">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "VideoGame", "name": "Project Lodestar", "genre": "Educational space simulation", "author": {"@type": "Organization", "name": "Rockets Built Wright", "member": [{"@type": "Person", "name": "Aidan Ma"}, {"@type": "Person", "name": "Thomas Heacock"}, {"@type": "Person", "name": "Pranav Lekkala"}, {"@type": "Person", "name": "Nathan Grondin"}, {"@type": "Person", "name": "Collin Lee"}]}, "url": "https://pranavlekkala-dotcom.github.io/lodestar/", "aiUsageDisclosure": [{"tool": "Claude (Anthropic) via Claude Code", "uses": ["game engine code (index.html)", "movement, interaction, hazards, checkpoints", "Chapter 1-2 story flow", "repair mini-games (2D input + procedural 3D models)", "intro film player, branching endings, credits", "integration and restyling of teammates' prologue and Chapter 3 modules", "Blender Python build scripts for the ship, rooms, props and service hardware", "dialogue, Mission Control lines and on-screen text drafts (edited from the team's story)", "voice-line scripts", "automated playtesting and bug fixing", "trailer and proposal video editing, captions, synthesized music code", "cutscene review and remake prompts", "documentation, packaging and web publishing"]}, {"tool": "Piper neural text-to-speech (open source, offline)", "uses": ["all in-game voices: Mission Control and ship (en_GB-alba-medium), survivor and PDA (en_US-hfc_male-medium), ending lines"]}, {"tool": "ChatGPT (OpenAI)", "uses": ["teammates' maintenance-repair design handoff document (content rebuilt in the game; its code not used)"]}, {"tool": "Teammate-supplied work", "uses": ["intro film, launch film, training and Chapter 3 modules and cutscenes: AI assistance, if any, is declared in their handoff documents; cutscenes in the game are Blender renders"]}], "notAI": ["music synthesized by ordinary code", "third-party 3D models, textures and sounds are human-made assets (see CREDITS.md)"]}</script>
+
+
 <title>Lodestar Ship</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap">
@@ -536,6 +541,36 @@ body.trailer, body.trailer * { cursor: none !important; } body.trHidePanel #scrP
 #mg.mgOut .frame { transition: opacity .3s, transform .3s; opacity: 0; transform: scale(.97); }
 #trCap { position: fixed; left: 50%; top: 9%; transform: translateX(-50%); z-index: 79; font: 600 15px var(--mono); letter-spacing: .32em; color: #fff; padding: 10px 22px; background: rgba(10,13,14,.55); border-left: 3px solid #ff6a55; opacity: 0; transition: opacity .6s; pointer-events: none; white-space: nowrap; }
 #trCap.on { opacity: 1; }
+#endOv{position:fixed;inset:0;z-index:95;display:grid;place-items:center;background:rgba(2,4,6,.82);opacity:0;pointer-events:none;transition:opacity .5s}
+#endOv.on{opacity:1;pointer-events:auto}
+.endCard{text-align:center}.endCard b{display:block;font:600 64px var(--cond);letter-spacing:.2em;color:#fff}.endCard span{display:block;margin-top:14px;font:600 14px var(--mono);letter-spacing:.32em;color:#ffb347}
+.endPanel{width:min(760px,90vw);background:rgba(10,13,14,.96);border:1px solid rgba(255,255,255,.14);border-left:3px solid #ff6a55;padding:30px 34px;color:#e6f1f5;font-family:var(--font)}
+.endPanel .ek{font:600 11px var(--mono);letter-spacing:.24em;color:#ff6a55}.endPanel h2{margin:8px 0 12px;font:600 40px var(--cond);letter-spacing:.06em;text-transform:uppercase;color:#fff}
+.endPanel p{font-size:16px;line-height:1.6;color:#d5e2e7;margin:0 0 18px}.endPanel .emeta{margin-top:14px;font:500 12px var(--mono);color:#9fb3bb;letter-spacing:.08em}
+.eopts{display:grid;gap:10px}.eopt{text-align:left;display:block;width:100%}.eopt b{display:block;font:600 18px var(--cond);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}.eopt span{display:block;font:400 14px/1.45 var(--font);color:#c6d3d8;text-transform:none;letter-spacing:0}
+.endPanel blockquote{margin:0 0 20px;padding-left:14px;border-left:2px solid #ffb347;font:500 20px/1.4 var(--font);color:#fff}.endPanel cite{display:block;margin-top:6px;font:600 11px var(--mono);letter-spacing:.24em;color:#ffb347;font-style:normal}
+/* ---- unified buttons (owner, Nov 15): one look for every button in the game ---- */
+.ubtn, .ghost, .pill, .hbtn, .hclose, #mgClose, #dlgClose, #hoCh3, #hoReplay, #hoExplore, .cprow button, #fail button, #handoff button, #introSkip,
+body .ch3-close, body .ch3-surface button.ch3-primary, body .ch3-flight button.ch3-primary, body .ch3-surface button.ch3-secondary, body .ch3-flight button.ch3-secondary, body #ch3-objective button {
+  font: 600 12px var(--mono) !important; letter-spacing: .14em !important; text-transform: uppercase; border-radius: 0 !important;
+  padding: 10px 16px !important; color: #e6f1f5 !important; background: rgba(255,255,255,.05) !important; border: 1px solid rgba(255,255,255,.22) !important;
+  cursor: pointer; transition: background .15s, border-color .15s; box-shadow: none !important; }
+.ubtn:hover, .ghost:hover, .pill:hover, .hbtn:hover:not(:disabled), .hclose:hover, #mgClose:hover, .cprow button:hover, #introSkip:hover,
+body .ch3-close:hover, body .ch3-surface button.ch3-secondary:hover, body .ch3-flight button.ch3-secondary:hover { background: rgba(95,224,240,.12) !important; border-color: #5fe0f0 !important; }
+#hoCh3, .ubtn.primary, body .ch3-surface button.ch3-primary, body .ch3-flight button.ch3-primary { background: rgba(255,106,85,.16) !important; border-color: #ff6a55 !important; color: #fff !important; }
+#hoCh3:hover, .ubtn.primary:hover, body .ch3-surface button.ch3-primary:hover, body .ch3-flight button.ch3-primary:hover { background: rgba(255,106,85,.3) !important; }
+.hbtn:disabled, .ubtn:disabled { opacity: .4; cursor: default; }
+.eopt.ubtn { padding: 14px 16px !important; letter-spacing: 0 !important; text-transform: none; font-family: var(--font) !important; }
+#endOv.film{background:#000}#endOv #epiVid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#endOv .epiT{position:relative;text-align:center;align-self:end;margin-bottom:12vh;text-shadow:0 2px 18px rgba(0,0,0,.8)}
+#endOv .epiT b{display:block;font:600 64px var(--cond);letter-spacing:.2em;color:#fff}#endOv .epiT span{display:block;margin-top:12px;font:600 13px var(--mono);letter-spacing:.3em;color:#ffb347}
+#introSkip{position:fixed;right:32px;bottom:30px;z-index:85}
+body.introOn #trVid{z-index:81} body.introOn #landing{opacity:0;pointer-events:none}
+.crWrap{position:absolute;inset:0;overflow:hidden;background:#000}.crRoll{position:absolute;left:50%;width:min(760px,86vw);margin-left:calc(min(760px,86vw) / -2);text-align:center;will-change:transform}
+.crRoll div{margin:0 auto}.cr-h1{font:600 64px var(--cond);letter-spacing:.2em;color:#fff}.cr-sub{font:600 13px var(--mono);letter-spacing:.3em;color:#ffb347;margin-top:10px !important}
+.cr-sec{font:600 12px var(--mono);letter-spacing:.3em;color:#ff6a55;margin-top:56px !important;margin-bottom:14px !important}.cr-name{font:500 26px var(--font);color:#fff;line-height:1.6}
+.cr-txt{font:400 16px/1.6 var(--font);color:#c6d3d8;margin-bottom:10px !important}.cr-h2{font:600 40px var(--cond);letter-spacing:.12em;color:#fff;margin-top:20px !important}.cr-small{font:500 14px var(--font);color:#9fb3bb;margin-top:18px !important}
+#crSkip{position:absolute;right:32px;bottom:30px}
 </style>
 <script type="importmap">
 { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/", "three-mesh-bvh": "https://cdn.jsdelivr.net/npm/three-mesh-bvh@0.7.6/build/index.module.js" } }
@@ -582,7 +617,7 @@ body.trailer, body.trailer * { cursor: none !important; } body.trHidePanel #scrP
   <button class="pill" id="enterBtn" type="button" disabled>Begin mission</button>
   <button class="pill ghostPill" id="contBtn" type="button" hidden>Continue</button>
   <button class="pill ghostPill" id="exploreBtn" type="button" disabled>Explore the hub</button>
-  <div class="cprow" id="cpRow" hidden><span>RECORDING CHECKPOINTS</span><button type="button" data-cp="cruise">Day 63 · scrubber</button><button type="button" data-cp="arrive">Day 241 · fan</button><button type="button" data-cp="reception">Transmission</button><button type="button" data-cp="handoff">CubeSat handoff</button><button type="button" onclick="location.href='prologue/index.html'">Intro + training</button><button type="button" data-cp="chapter3">Chapter 3</button></div>
+  <div class="cprow" id="cpRow" hidden><span>RECORDING CHECKPOINTS</span><button type="button" data-cp="cruise">Day 63 · scrubber</button><button type="button" data-cp="arrive">Day 241 · fan</button><button type="button" data-cp="reception">Transmission</button><button type="button" data-cp="handoff">CubeSat handoff</button><button type="button" id="replayIntro">Replay intro</button><button type="button" id="rollCr">Credits</button><button type="button" data-cp="chapter3">Chapter 3</button></div>
   <div class="cprow" id="tryRow" hidden><span>TRY THE REPAIRS</span><button type="button" data-try="power">Power</button><button type="button" data-try="scrubber">CO₂ scrubber</button><button type="button" data-try="fan">Cooling fan</button><button type="button" data-try="rx">Receiver</button><button type="button" data-try="leak">O₂ leak</button></div>
   <div class="howto"><span><b>Mouse</b> look</span><span><b>WASD</b> pull along</span><span><b>C</b> push off</span><span><b>Right mouse</b> brake</span><span><b>E</b> interact</span><span><b>Tab</b> PDA</span></div>
 </div>
@@ -600,7 +635,7 @@ body.trailer, body.trailer * { cursor: none !important; } body.trHidePanel #scrP
 
 <div id="svcPanel" hidden role="dialog" aria-labelledby="svcTitle"><header class="hhd"><div class="hic"><b>⚡</b></div><h2 id="svcTitle">Power cabinet</h2><button class="hclose" type="button" id="svcClose">LEAVE · E</button></header><div id="svcBody"></div></div>
 <div id="hazTint" class="layer"></div>
-<div id="trBlack"></div><div id="trCap"></div><video id="trVid" playsinline preload="auto"></video><div id="trCard"></div>
+<div id="trBlack"></div><button type="button" id="introSkip" hidden>Skip ▸</button><div id="trCap"></div><video id="trVid" playsinline preload="auto"></video><div id="trCard"></div>
 <div id="roomCard" class="hud" aria-live="polite"></div>
 <div id="disc" class="hud" aria-live="polite"></div>
 <div id="hazHud" class="hud"></div>
@@ -1198,6 +1233,7 @@ async function boot() {
       closeModal() { $("scrPanel").classList.remove("ch3-modal"); closeScreen(); },
       requestLook: requestLock,
       registerSolids(meshes, obstacles) { for (const m of meshes) { m.geometry.computeBoundsTree(); RAYSTATIC.push(m); } L.obstacles.push(...obstacles); },
+      endingBranch: st3 => endingChoice(st3), endingEpilogue: b => endingEpilogue(b), endingInterlude: c => endingCard(c[0], c[1], 2800), endingClipStart: (id, b) => endingVoices(id, b),
       travelTo(eye, yaw, target) { pos.fromArray(eye); vel.set(0, 0, 0); look.yaw = yaw; look.pitch = -.08; if (target) { const d = new THREE.Vector3(...target).sub(pos); look.yaw = Math.atan2(-d.x, -d.z); look.pitch = Math.atan2(d.y, Math.hypot(d.x, d.z)); } MOVE?.reset(pos); requestLock(); } };
     CHAPTER3_WORKSHOP = mountCubeSatWorkshop(chapter3Host, { enabled: false });
     CHAPTER3_DIRECTOR = mountChapter3(chapter3Host, CHAPTER3_WORKSHOP, { enabled: false, demoTravel: false, mediaBase: new URL("./chapter3-mission/media/", document.baseURI).href });
@@ -3385,6 +3421,69 @@ async function trailerRun() {
   TRL.on = false; window.__trailerDone = true;
 }
 let TRAILER_VOICE = false;
+
+/* ================= Chapter 3 endings (owner, Nov 15): the player chooses; the epilogue reflects the choice and the run ================= */
+const endWait = ms => new Promise(r => setTimeout(r, ms));
+function endingOverlay(html) { let o = $("endOv"); if (!o) { o = document.createElement("div"); o.id = "endOv"; document.body.append(o); } o.innerHTML = html; o.classList.add("on"); if (document.pointerLockElement) document.exitPointerLock(); return o; }
+function endingClose() { const o = $("endOv"); if (o) o.classList.remove("on"); }
+async function endingCard(big, small, ms) { endingOverlay(`<div class="endCard"><b>${big}</b><span>${small}</span></div>`); beep(70, 1.2, .2, "sine"); await endWait(ms); endingClose(); await endWait(450); }
+function endingChoice(st3) {
+  const fails = (st3.history || []).filter(h => h.kind && h.kind !== "success").length, kits = st3.stores?.issued || 1;
+  return new Promise(res => {
+    const o = endingOverlay(`<div class="endPanel"><div class="ek">MISSION DECISION · ORBIT OF VESPER</div><h2>The survivor is aboard.</h2>
+      <p>Expedition One's last crew member is safe on the Lodestar. The ship has fuel for one more task before the return window closes.</p>
+      <div class="eopts"><button type="button" class="ubtn eopt" data-b="home"><b>Head home now</b><span>Get the survivor to medical care on Earth. The helium-3 survey waits for the next crew.</span></button>
+      <button type="button" class="ubtn eopt" data-b="survey"><b>Complete the helium-3 survey first</b><span>Three more weeks in orbit to map the titanium-rich ground. Earth gets its fuel data; the survivor waits.</span></button></div>
+      <div class="emeta">Your run: ${fails} failed attempt${fails === 1 ? "" : "s"} · ${kits} relay kit${kits === 1 ? "" : "s"} used</div></div>`);
+    o.querySelectorAll(".eopt").forEach(b => b.onclick = () => { beep(880, .08, .06); endingClose();
+      const id = b.dataset.b, B = { id, fails, kits };
+      if (id === "home") Object.assign(B, { clips: ["rescue_finale"] });
+      else Object.assign(B, { clips: ["rescue_docking", "rescue_departure"], between: { rescue_departure: ["21 DAYS LATER", "THE HELIUM-3 SURVEY IS COMPLETE"] } });
+      setTimeout(() => res(B), 500); });
+  });
+}
+
+const CREDITS_ROLL = [
+  ["h1", "PROJECT LODESTAR"], ["sub", "ROCKETS BUILT WRIGHT · MISSION GAME DESIGN"],
+  ["sec", "THE TEAM"], ["name", "Aidan Ma"], ["name", "Thomas Heacock"], ["name", "Pranav Lekkala"], ["name", "Nathan Grondin"], ["name", "Collin Lee"],
+  ["sec", "EDUCATIONAL RESOURCES"], ["txt", "NASA CubeSat 101 · NASA Small Spacecraft State of the Art · NASA General Mission Analysis Tool (GMAT) · Mars Fact Sheet · ISS life-support (ECLSS) references"],
+  ["sec", "THIRD-PARTY ASSETS"], ["txt", "three.js and three-mesh-bvh (MIT) · “Astronaut” by Jungle Jim (CC BY 4.0) · “Alien Planet” by dnslv (CC BY) · “Sky Pano – Milkyway” by MozillaHubs / HDRLabs (CC BY-NC-SA 4.0)"],
+  ["txt", "Sound: “Ambient Spaceship Hums” by dklon (CC BY 3.0) · Sci-Fi Sound Effects Library by Little Robot Sound Factory (CC BY 3.0)"],
+  ["txt", "Intro-film models from Sketchfab creators under CC BY (full list in prologue/assets/source-credits.md)"],
+  ["sec", "VOICES"], ["txt", "Piper neural text-to-speech · Alba voice (University of Edinburgh, CC BY 4.0) · Hi-Fi CAPTAIN voice (NICT, CC BY-NC-SA 4.0)"],
+  ["sec", "USE OF AI"],
+  ["txt", "Claude (Anthropic), via Claude Code: game code, repair mini-games, Blender build scripts for the ship and props, integration of the team's chapters, dialogue drafts, testing, video editing, documentation and publishing."],
+  ["txt", "Piper neural text-to-speech: every in-game voice."],
+  ["txt", "ChatGPT (OpenAI): a teammate design handoff for the repair systems (content rebuilt in the game)."],
+  ["txt", "Teammate films and modules: AI use as declared in their handoffs. Full list: AI_USAGE.md"],
+  ["sec", ""], ["h2", "Thank you for playing."], ["small", "Made with Claude"],
+];
+function rollCredits() {
+  return new Promise(res => {
+    const o = endingOverlay(`<div class="crWrap"><div class="crRoll">${CREDITS_ROLL.map(([k, t]) => `<div class="cr-${k}">${t}</div>`).join("")}</div></div><button type="button" class="ubtn" id="crSkip">Skip ▸</button>`);
+    o.classList.add("film"); const roll = o.querySelector(".crRoll"); let y = innerHeight, done = false, last = performance.now();
+    const finish = () => { if (done) return; done = true; o.classList.remove("on"); setTimeout(() => { o.classList.remove("film"); res(); }, 600); };
+    $("crSkip").onclick = finish;
+    const step = now => { if (done) return; y -= (now - last) / 1000 * 60; last = now; roll.style.transform = `translateY(${y}px)`; if (y < -roll.offsetHeight - 40) return finish(); requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+  });
+}
+// spoken lines over the ending films (Mission Control / ship = Alba, survivor = radio voice), timed to each clip
+const END_VO = { home: { rescue_finale: [[.2, "ascent"], [6.4, "capture"], [11.7, "surv"], [14.4, "heard"]] },
+  survey: { rescue_docking: [[.4, "surv"], [3.1, "heard"]], rescue_departure: [[.2, "depart"]] } };
+const endTimers = [];
+function endSay(k) { const a = new Audio("voice_end/" + k + ".wav"); a.volume = 1; a.play().catch(() => {}); return a; }
+function endingVoices(id, B) { endTimers.splice(0).forEach(clearTimeout); for (const [t, k] of (END_VO[B?.id] || {})[id] || []) endTimers.push(setTimeout(() => endSay(k), t * 1000)); }
+async function endingEpilogue(B) {   // the departure film, slowed, with the ending title over it and a spoken wrap-up
+  const title = B.id === "survey" ? "THE LONG WAY HOME" : B.fails === 0 ? "PERFECT RECOVERY" : "A SIGNAL HOME";
+  const sub = B.id === "survey" ? "HELIUM-3 SURVEY COMPLETE · SURVIVOR RECOVERED" : B.fails === 0 ? "EVERY REHEARSAL PASSED FIRST TIME" : `${B.fails} FAILED ATTEMPT${B.fails === 1 ? "" : "S"} · ${B.kits} RELAY KIT${B.kits === 1 ? "" : "S"} · SURVIVOR RECOVERED`;
+  const line = B.id === "survey" ? "surveydone" : B.fails === 0 ? "perfect" : "setback";
+  const o = endingOverlay(`<video id="epiVid" muted playsinline src="chapter3-mission/media/rescue_departure.mp4"></video><div class="epiT"><b>${title}</b><span>${sub}</span></div>`);
+  o.classList.add("film"); const v = $("epiVid"); v.playbackRate = .55; v.play().catch(() => {});
+  beep(70, 1.6, .22, "sine"); await endWait(700); const a = endSay(line);
+  await new Promise(r => { const done = () => r(); a.addEventListener("ended", () => setTimeout(done, 1600)); setTimeout(done, 9500); });
+  o.classList.remove("on"); await endWait(600); o.classList.remove("film"); await rollCredits();
+}
 function startChapter3() {   // after the corrupted transmission: chapter card, then the relay bench in the Equipment bay
   if (!CHAPTER3_DIRECTOR) { notify("CHAPTER 3", "Not available in this build"); return; }
   $("handoff").hidden = true; SAVE.set("chapter3");
@@ -3644,11 +3743,25 @@ function start() {
   requestLock(); canvas.focus();
   openingBegin();   // team storyline (Nov 14): docked in a dark station. The old tutorial (TUTEV.begin) is no longer started.
 }
-$("enterBtn").onclick = start;
+$("enterBtn").onclick = () => playIntro(start);
+// opening films in the game's own player (owner, Nov 15: no water-world tutorial; keep the films; launch -> docking -> fade -> aboard)
+const INTRO = [["prologue/media/lodestar-intro.mp4", 0, 99, "PROJECT LODESTAR"], ["prologue/media/tutorial-exit.mp4", 0, 8.2, "LAUNCH"], ["chapter3-mission/media/rescue_docking.mp4", 0, 99, "DOCKING · THE LODESTAR"]];
+function playIntro(done) {
+  const v = $("trVid"), skip = $("introSkip"), bl = $("trBlack"); let i = -1, finished = false;
+  document.body.classList.add("introOn"); bl.classList.add("on"); skip.hidden = false; audioInit();
+  const end = () => { if (finished) return; finished = true; v.onended = v.ontimeupdate = null; v.style.opacity = 0; skip.hidden = true;
+    setTimeout(() => { v.pause(); v.removeAttribute("src"); v.load(); document.body.classList.remove("introOn"); done(); setTimeout(() => bl.classList.remove("on"), 700); }, 650); };
+  const next = () => { i++; if (i >= INTRO.length) return end(); const [src, from, to] = INTRO[i];
+    v.style.opacity = 0; setTimeout(() => { v.src = src; v.muted = false; v.volume = 1; v.currentTime = from; v.play().catch(() => { v.muted = true; v.play().catch(() => {}); }); v.style.opacity = 1; }, i ? 550 : 50);
+    v.onended = next; v.ontimeupdate = () => { if (v.currentTime >= to) { v.ontimeupdate = null; next(); } }; };
+  skip.onclick = () => { beep(900, .03, .04); next(); }; skip.oncontextmenu = e => { e.preventDefault(); end(); };
+  addEventListener("keydown", function k(e) { if (finished) return removeEventListener("keydown", k); if (e.code === "Escape") { e.preventDefault(); end(); } else if (e.code === "Space" || e.code === "Enter") { e.preventDefault(); next(); } });
+  next();
+}
 { // arriving from Tom's training simulation (game shell: intro film -> training -> transition -> here)
   const q = new URLSearchParams(location.search);
-  if (q.get("from") === "training") {
-    $("landKicker").textContent = (q.get("status") === "completed" ? "TRAINING COMPLETE" : "TRAINING SKIPPED") + " · CHAPTER 1 · ARRIVAL";
+  if (true) {
+    $("landKicker").textContent = "CHAPTER 1 · ARRIVAL";
     $("landText").textContent = "Selected for the mission. Months later, your capsule docks with the Lodestar. The station is dark on reserve power: get it running.";
   }
 }
@@ -3659,6 +3772,8 @@ function continueGame(cp) {   // resume at a checkpoint (or a labelled recording
   startChapter2(cp);
 }
 document.querySelectorAll("#cpRow button[data-cp]").forEach(b => b.onclick = () => continueGame(b.dataset.cp));
+$("replayIntro").onclick = () => playIntro(() => {});
+$("rollCr").onclick = () => rollCredits();
 // practice: open one repair mini-game straight from the title (free roam behind it; finishing it changes nothing in the story)
 function tryRepair(a) { if (!st.playing) explore(); MG.practice = true; delete MG.st[a]; SVC.diag[a] = false; SVC.hintIdx[a] = null; setTimeout(() => { if (SVC.asm) leaveService(); enterService(a); }, 700); }
 document.querySelectorAll("#tryRow button").forEach(b => b.onclick = () => tryRepair(b.dataset.try));
@@ -3675,5 +3790,5 @@ $("exploreBtn").onclick = explore;
 $("lockHint").onclick = requestLock;
 boot().catch(e => { console.error(e); $("loading").textContent = "COULD NOT LOAD THE SHIP · " + (e.message || e); });
 
-window.__lodestar = { trailerRun, get chapter3() { return CHAPTER3_DIRECTOR; }, get chapter3Workshop() { return CHAPTER3_WORKSHOP; }, startChapter3, fixed, courseSet, openScreen, closeScreen, CH2, HAZ, NOTES, SAVE, SCRUB, FAN, RXS, startChapter2, faultStart, continueGame, missionFail, skipCine, OPEN, SFXS, HOLO, SVC, PWR, enterService, leaveService, svcAct, get AU() { return AU; }, openingBegin, openPowerPanel, restorePower, sitDown, standUp, openScreen, closeScreen, SCR, INT, titleCam, clearance, CLR, get MOVE() { return MOVE; }, TALK, VOICE, get audio() { return AU.ctx; }, LOOK, grade, composer, hemi, get lookK() { return lookK; }, explore, inPortal, valid: p => valid(p), INT, useInt, DARK, TUT, TUTEV, talk, endChapter1, endSimulation: endChapter1, playSelection, st, pos, vel, look, keys, SC, DB, get L() { return L; }, start, togglePda, openRepair, equip, startAlarm, setMood, completeScan, cam, scene, get aimHit() { return aimHit; }, RG, step: (dt) => step(dt, T0 += dt), renderer, renderOnce(n = 1, dt = 1 / 30) { for (let i = 0; i < n; i++) { T0 += dt; if (st.playing) step(dt, T0); } composer.render(dt); if (CAMV.on) drawCameraFeed(); holoFrame(dt); } };
+window.__lodestar = { trailerRun, endingChoice, endingEpilogue, endingVoices, playIntro, get chapter3() { return CHAPTER3_DIRECTOR; }, get chapter3Workshop() { return CHAPTER3_WORKSHOP; }, startChapter3, fixed, courseSet, openScreen, closeScreen, CH2, HAZ, NOTES, SAVE, SCRUB, FAN, RXS, startChapter2, faultStart, continueGame, missionFail, skipCine, OPEN, SFXS, HOLO, SVC, PWR, enterService, leaveService, svcAct, get AU() { return AU; }, openingBegin, openPowerPanel, restorePower, sitDown, standUp, openScreen, closeScreen, SCR, INT, titleCam, clearance, CLR, get MOVE() { return MOVE; }, TALK, VOICE, get audio() { return AU.ctx; }, LOOK, grade, composer, hemi, get lookK() { return lookK; }, explore, inPortal, valid: p => valid(p), INT, useInt, DARK, TUT, TUTEV, talk, endChapter1, endSimulation: endChapter1, playSelection, st, pos, vel, look, keys, SC, DB, get L() { return L; }, start, togglePda, openRepair, equip, startAlarm, setMood, completeScan, cam, scene, get aimHit() { return aimHit; }, RG, step: (dt) => step(dt, T0 += dt), renderer, renderOnce(n = 1, dt = 1 / 30) { for (let i = 0; i < n; i++) { T0 += dt; if (st.playing) step(dt, T0); } composer.render(dt); if (CAMV.on) drawCameraFeed(); holoFrame(dt); } };
 </script>
