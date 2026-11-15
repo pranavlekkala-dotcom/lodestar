@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lodestar screens v3 (mockup)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* "system window" look: a projected holographic panel. Our own design (owner asked for a game-system-window feel). */
+:root{--holo:#5fe3ff;--holo2:#2a8cff;--holoDim:rgba(95,227,255,.35);--ink:#e9fbff;--mute:#8fb8c6;--warn:#ffb347;--bad:#ff5a6a;--ok:#6dffb0;
+  --glass:rgba(6,22,40,.72);--glass2:rgba(10,40,70,.55)}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#03070b;color:var(--ink);font-family:'IBM Plex Sans',sans-serif;overflow:hidden}
+#bg{position:fixed;inset:0;background:url(cockpit_bg.jpg) center/cover;filter:blur(3px) brightness(.55) saturate(.8);transform:scale(1.25);transform-origin:50% 62%}
+#vign{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 55%,transparent 30%,rgba(0,0,0,.65) 100%)}
+.tabs{position:fixed;top:14px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:5}
+.tabs button{font:600 13px 'Barlow Condensed';letter-spacing:.14em;color:var(--mute);background:rgba(4,14,24,.7);border:1px solid var(--holoDim);padding:7px 14px;cursor:pointer}
+.tabs button.on{color:#03121a;background:var(--holo);box-shadow:0 0 14px var(--holo)}
+.note{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);font:12px 'IBM Plex Mono';color:#7d9aa5;z-index:5;text-align:center}
+
+/* the window */
+.sys{position:fixed;left:50%;top:52%;width:min(880px,92vw);transform:translate(-50%,-50%) perspective(1400px) rotateX(2deg);
+  background:linear-gradient(180deg,var(--glass2),var(--glass));border:1px solid var(--holo);
+  box-shadow:0 0 0 1px rgba(95,227,255,.15) inset,0 0 28px rgba(95,227,255,.35),0 0 90px rgba(42,140,255,.18) inset;
+  padding:0;backdrop-filter:blur(6px);animation:open .5s cubic-bezier(.2,.9,.3,1) both;display:none}
+.sys.on{display:block}
+@keyframes open{0%{opacity:0;clip-path:inset(49% 0 49% 0)}60%{opacity:1;clip-path:inset(0 0 0 0)}100%{opacity:1}}
+.sys::before{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(95,227,255,.05) 0 1px,transparent 1px 4px);mix-blend-mode:screen}
+.sys::after{content:"";position:absolute;inset:-1px;pointer-events:none;
+  background:linear-gradient(var(--holo),var(--holo)) top left/22px 3px,linear-gradient(var(--holo),var(--holo)) top left/3px 22px,
+  linear-gradient(var(--holo),var(--holo)) top right/22px 3px,linear-gradient(var(--holo),var(--holo)) top right/3px 22px,
+  linear-gradient(var(--holo),var(--holo)) bottom left/22px 3px,linear-gradient(var(--holo),var(--holo)) bottom left/3px 22px,
+  linear-gradient(var(--holo),var(--holo)) bottom right/22px 3px,linear-gradient(var(--holo),var(--holo)) bottom right/3px 22px;background-repeat:no-repeat;filter:drop-shadow(0 0 6px var(--holo))}
+.hd{display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid var(--holoDim);background:linear-gradient(90deg,rgba(95,227,255,.16),transparent 70%)}
+.hd .ic{width:26px;height:26px;border:1.5px solid var(--holo);display:grid;place-items:center;font:700 14px 'Barlow Condensed';color:var(--holo);box-shadow:0 0 10px var(--holoDim);transform:rotate(45deg)}
+.hd .ic b{transform:rotate(-45deg)}
+.hd h2{margin:0;font:700 24px 'Barlow Condensed';letter-spacing:.2em;text-shadow:0 0 12px var(--holo)}
+.hd .sub{margin-left:auto;font:500 12px 'IBM Plex Mono';color:var(--mute);letter-spacing:.08em}
+.bd{padding:18px 22px 20px}
+.k{font:500 11px 'IBM Plex Mono';letter-spacing:.14em;color:var(--mute);text-transform:uppercase}
+.glow{color:var(--holo);text-shadow:0 0 10px var(--holo)}
+.btn{font:700 15px 'Barlow Condensed';letter-spacing:.16em;color:var(--holo);background:rgba(95,227,255,.08);border:1px solid var(--holo);padding:10px 18px;cursor:pointer;box-shadow:0 0 12px var(--holoDim)}
+.btn:hover{background:rgba(95,227,255,.2)}.btn[disabled]{opacity:.35;cursor:default;box-shadow:none}
+.btn.warn{color:var(--warn);border-color:var(--warn)}
+.foot{display:flex;justify-content:space-between;align-items:center;margin-top:16px;gap:12px}
+.hint{font:12px 'IBM Plex Mono';color:var(--mute)}
+
+/* nav */
+.steps{display:flex;gap:0;margin-bottom:16px}
+.steps div{flex:1;font:600 13px 'Barlow Condensed';letter-spacing:.12em;color:var(--mute);padding:7px 10px;border:1px solid var(--holoDim);border-right:none;position:relative}
+.steps div:last-child{border-right:1px solid var(--holoDim)}
+.steps div.on{color:#03121a;background:var(--holo);box-shadow:0 0 14px var(--holoDim)}
+.steps div.done{color:var(--ok)}
+.navg{display:grid;grid-template-columns:200px 1fr;gap:18px}
+.tg{display:block;width:100%;text-align:left;background:none;border:1px solid transparent;color:var(--ink);padding:9px 10px;cursor:pointer;margin-bottom:4px}
+.tg b{font:600 18px 'Barlow Condensed';letter-spacing:.06em;display:block}.tg span{font:11px 'IBM Plex Mono';color:var(--mute)}
+.tg.on{border-color:var(--holo);background:rgba(95,227,255,.1);box-shadow:0 0 10px var(--holoDim) inset}
+svg text{font:11px 'IBM Plex Mono';fill:var(--mute)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px}
+.stats div{border-left:2px solid var(--holo);padding:3px 10px}.stats b{display:block;font:600 20px 'IBM Plex Mono'}
+.bar{height:8px;border:1px solid var(--holoDim);margin-top:6px;position:relative;overflow:hidden}.bar i{position:absolute;inset:0 auto 0 0;background:var(--holo);box-shadow:0 0 10px var(--holo)}
+
+/* brief */
+.slide{display:grid;grid-template-columns:1.1fr 1fr;gap:22px;min-height:290px}
+.slide h3{margin:4px 0 10px;font:700 34px 'Barlow Condensed';letter-spacing:.06em;text-shadow:0 0 14px var(--holoDim)}
+.slide p{margin:0 0 10px;font-size:15px;line-height:1.55;color:#cfe9f1}
+.pic{border:1px solid var(--holoDim);background:radial-gradient(circle at 50% 50%,rgba(95,227,255,.08),transparent 70%);display:grid;place-items:center;position:relative}
+.voice{display:flex;align-items:center;gap:10px;font:12px 'IBM Plex Mono';color:var(--mute)}
+.wave{display:flex;gap:3px;align-items:center;height:18px}.wave i{width:3px;background:var(--holo);box-shadow:0 0 6px var(--holo);animation:w 1s infinite ease-in-out}
+@keyframes w{0%,100%{height:4px}50%{height:18px}}
+.dots{display:flex;gap:6px}.dots i{width:22px;height:4px;background:var(--holoDim)}.dots i.on{background:var(--holo);box-shadow:0 0 8px var(--holo)}
+
+/* power task */
+.pw{display:grid;grid-template-columns:1fr 210px;gap:20px}
+.board{position:relative;height:320px;border:1px solid var(--holoDim);background:rgba(0,10,20,.35)}
+.board svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.term{position:absolute;width:150px;display:flex;align-items:center;gap:8px;font:600 15px 'Barlow Condensed';letter-spacing:.06em;user-select:none}
+.term.l{left:12px}.term.r{right:12px;flex-direction:row-reverse;text-align:right}
+.plug{width:22px;height:22px;border:2px solid currentColor;border-radius:50%;cursor:grab;box-shadow:0 0 10px currentColor;background:rgba(0,0,0,.4);flex:none}
+.term small{display:block;font:11px 'IBM Plex Mono';color:var(--mute);letter-spacing:0}
+.meter{border:1px solid var(--holoDim);padding:12px}
+.big{font:600 34px 'IBM Plex Mono';margin:4px 0}
+.vbar{height:180px;width:38px;border:1px solid var(--holoDim);position:relative;margin:8px auto}
+.vbar i{position:absolute;left:2px;right:2px;bottom:2px;background:var(--ok);box-shadow:0 0 12px var(--ok);transition:height .25s,background .25s}
+.vbar .lim{position:absolute;left:-8px;right:-8px;border-top:2px dashed var(--warn)}
+.lever{margin-top:12px;width:100%}
+.msg{min-height:20px;font:13px 'IBM Plex Mono';margin-top:10px}
+.spark{animation:sp .4s}@keyframes sp{0%,100%{filter:none}30%{filter:brightness(2.5) hue-rotate(-40deg)}}
+
+/* comms + camera */
+.cc{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.log div{padding:8px 0;border-bottom:1px solid rgba(95,227,255,.12);font-size:14px;color:#cfe9f1}
+.log b{font:600 12px 'IBM Plex Mono';color:var(--holo);margin-right:8px}
+.frag{margin-top:10px;font:13px 'IBM Plex Mono';color:var(--warn);text-shadow:0 0 8px rgba(255,179,71,.5)}
+.cam{position:relative;height:250px;border:1px solid var(--holoDim);overflow:hidden;background:#000}
+.cam canvas{width:100%;height:100%;display:block}
+.cam .os{position:absolute;inset:8px;font:11px 'IBM Plex Mono';color:var(--holo);display:flex;flex-direction:column;justify-content:space-between;pointer-events:none}
+@media (max-width:700px){.navg,.slide,.pw,.cc{grid-template-columns:1fr}.board{height:300px}}
+</style></head><body>
+<div id="bg"></div><div id="vign"></div>
+<div class="tabs"><button data-t="nav" class="on">NAVIGATION</button><button data-t="brief">MISSION BRIEF</button><button data-t="power">POWER TASK</button><button data-t="cc">COMMS + CAMERA</button></div>
+
+<!-- NAVIGATION: step-by-step burn -->
+<section class="sys on" id="nav"><div class="hd"><div class="ic"><b>N</b></div><h2>NAVIGATION</h2><span class="sub">ORBIT 410 KM · EARTH</span></div>
+<div class="bd">
+  <div class="steps" id="nsteps"><div>1 · TARGET</div><div>2 · TRANSFER</div><div>3 · WINDOW</div><div>4 · BURN</div></div>
+  <div class="navg">
+    <div id="tlist"></div>
+    <div><svg id="orb" viewBox="-170 -115 340 230" width="100%" height="230"></svg>
+      <div class="stats" id="nstats"></div></div>
+  </div>
+  <div class="foot"><span class="hint" id="nhint"></span><button class="btn" id="nbtn"></button></div>
+</div></section>
+
+<!-- MISSION BRIEF: voiced slides -->
+<section class="sys" id="brief"><div class="hd"><div class="ic"><b>!</b></div><h2>MISSION BRIEF</h2><span class="sub">MISSION CONTROL · VOICE</span></div>
+<div class="bd"><div class="slide" id="slide"></div>
+  <div class="foot"><div class="voice"><div class="wave"><i style="animation-delay:0s"></i><i style="animation-delay:.15s"></i><i style="animation-delay:.3s"></i><i style="animation-delay:.45s"></i><i style="animation-delay:.6s"></i></div>MISSION CONTROL IS SPEAKING</div>
+  <div class="dots" id="dots"></div><div><button class="btn" id="prev">BACK</button> <button class="btn" id="next">NEXT</button></div></div></div></section>
+
+<!-- POWER TASK: hands-on routing -->
+<section class="sys" id="power"><div class="hd"><div class="ic"><b>⚡</b></div><h2>POWER ROUTING</h2><span class="sub">SYSTEMS CORRIDOR · MAIN BUS</span></div>
+<div class="bd"><div class="pw">
+  <div class="board" id="board"><svg id="wires"></svg></div>
+  <div class="meter"><div class="k">Load on battery</div><div class="big"><span id="kw">0.0</span><span style="font-size:16px"> / 7.5 KW</span></div>
+    <div class="vbar"><div class="lim" style="bottom:calc(7.5/10*100%)"></div><i id="vb" style="height:0"></i></div>
+    <button class="btn lever" id="brk" disabled>HOLD TO CLOSE BREAKER</button><div class="bar" style="margin-top:8px"><i id="hold" style="width:0"></i></div></div>
+</div><div class="msg" id="pmsg">Drag a cable from each bus output to the system it should power. Watch the load.</div></div></section>
+
+<!-- COMMS + OUTSIDE CAMERA -->
+<section class="sys" id="cc"><div class="hd"><div class="ic"><b>≈</b></div><h2>COMMS · CAMERA</h2><span class="sub">LINK DELAY 0.1 S</span></div>
+<div class="bd"><div class="cc">
+  <div><div class="k">Radio log</div><div class="log">
+    <div><b>MISSION CONTROL</b>Lodestar, we read you. Welcome aboard.</div>
+    <div><b>MISSION CONTROL</b>Power looks good from here. Report to the cockpit.</div>
+    <div><b>LODESTAR</b>Mission bus restored. All rooms powered.</div></div>
+    <div class="frag">▲ UNKNOWN SIGNAL · FRAGMENT 1 / 8 · "…ves…r orbit… one of u…"</div></div>
+  <div><div class="k">Outside camera · aft array</div><div class="cam"><canvas id="camc" width="420" height="250"></canvas>
+    <div class="os"><span>CAM 2 · ARRAY B · LIVE</span><span>SUN ANGLE 34° · OUTPUT 9.6 KW</span></div></div></div>
+</div></div></section>
+
+<div class="note">MOCKUP · in the game the camera glides to the cockpit screen and this window is projected on it · our own design</div>
+<script>
+const $=id=>document.getElementById(id);
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));
+  document.querySelectorAll('.sys').forEach(s=>{s.classList.remove('on');void s.offsetWidth;s.classList.toggle('on',s.id===b.dataset.t)});});
+
+/* ---- NAV */
+const T={moon:{n:'The Moon',k:'real',r:1.25,d:'384,400 km',t:'3 days',dv:'3.1 km/s',w:'every day'},mars:{n:'Mars',k:'real',r:1.52,d:'225 M km',t:'8.5 months',dv:'3.6 km/s',w:'every 26 months'},vesper:{n:'Vesper',k:'fictional',r:1.9,d:'1.9 AU',t:'8 months',dv:'4.1 km/s',w:'opens in 00:42'}};
+let N={sel:'vesper',step:0,win:42,burn:0};
+function orb(){const D=T[N.sel],R0=50,R1=50*D.r,a=(R0+R1)/2,b=Math.sqrt(R0*R1);let s=`<circle r="7" fill="#ffd27a" style="filter:drop-shadow(0 0 6px #ffd27a)"/><circle r="${R0}" fill="none" stroke="rgba(95,227,255,.35)"/>`;
+ if(N.sel!=='moon')s+=`<circle r="${R1}" fill="none" stroke="rgba(95,227,255,.35)"/>`;
+ if(N.step>=1&&N.sel!=='moon'){const full=`M ${R0} 0 A ${a} ${b} 0 0 1 ${-R1} 0`;s+=`<path d="${full}" fill="none" stroke="#ffb347" stroke-dasharray="5 5"/>`;
+   if(N.step>=3)s+=`<path d="${full}" fill="none" stroke="#5fe3ff" stroke-width="2.5" pathLength="1" stroke-dasharray="${N.burn} 1" style="filter:drop-shadow(0 0 5px #5fe3ff)"/>`;}
+ s+=N.sel==='moon'?`<circle cx="${R0}" r="16" fill="none" stroke="rgba(95,227,255,.35)"/><circle cx="${R0+16}" r="3" fill="#ddd"/>`:`<circle cx="${-R1}" r="5" fill="#ff8a4a"/><text x="${-R1}" y="-11" text-anchor="middle">${D.n}</text>`;
+ s+=`<circle cx="${R0}" r="4.5" fill="#5aa0e6"/><text x="${R0+8}" y="-8">Earth</text>`;$('orb').innerHTML=s;}
+function nav(){const D=T[N.sel];$('nsteps').querySelectorAll('div').forEach((d,i)=>d.className=i<N.step?'done':i===N.step?'on':'');
+ $('tlist').innerHTML='<div class="k" style="margin-bottom:6px">Targets</div>'+Object.entries(T).map(([k,v])=>`<button class="tg${k===N.sel?' on':''}" data-k="${k}"><b>${v.n}</b><span>${v.k} · ${v.d}</span></button>`).join('');
+ $('tlist').querySelectorAll('.tg').forEach(b=>b.onclick=()=>{if(N.step>1)return;N.sel=b.dataset.k;N.step=0;nav();});
+ const st=[[`Distance`,D.d],[`Travel time`,D.t],[`Speed change`,D.dv]];if(N.step>=2)st[2]=['Window',N.win>0?`T-${N.win}s`:'OPEN'];
+ $('nstats').innerHTML=st.map(([k,v])=>`<div><span class="k">${k}</span><b class="${k==='Window'&&N.win<=0?'glow':''}">${v}</b></div>`).join('');
+ const H=['Choose where to go. Vesper is where Expedition 1 went silent.','A Hohmann transfer: one burn stretches your orbit out to touch the target\'s orbit.',`The planets must line up first. Window ${D.w}.`,'Hold the burn until the stretched orbit reaches the target.'][N.step];
+ $('nhint').textContent=H;const btn=$('nbtn');btn.disabled=false;
+ btn.textContent=['SELECT '+D.n.toUpperCase(),'PLOT TRANSFER','WAIT FOR WINDOW','BURN'][N.step];if(N.step===2&&N.win>0)btn.disabled=true;if(N.step===3&&N.burn>=1)btn.textContent='COURSE SET ✓';orb();}
+$('nbtn').onclick=()=>{if(N.step<2){N.step++;if(N.step===2){const t=setInterval(()=>{N.win-=6;if(N.win<=0){N.win=0;clearInterval(t);N.step=3;}nav();},120);}}
+ else if(N.step===3&&N.burn<1){const t=setInterval(()=>{N.burn=Math.min(1,N.burn+.04);nav();if(N.burn>=1)clearInterval(t);},40);}nav();};
+nav();
+
+/* ---- BRIEF */
+const S=[{h:'Your mission',p:['Fly the Lodestar to Vesper and bring back helium-3: a clean fuel for fusion power on Earth.','It is found in titanium-rich ground, which is what we will survey from orbit.'],g:'planet'},
+ {h:'Expedition 1',p:['Four crew went before you. They reached Vesper orbit, and then their signal stopped.','Their records are on the crew laptops. Read them as you go.'],g:'crew'},
+ {h:'The route',p:['About eight months on a transfer orbit. The radio delay grows the farther you travel.','You will keep the ship alive the whole way: air, water, power and heat.'],g:'route'},
+ {h:'Your role',p:['You are the only crew aboard. We are with you by radio, but out here you decide.','First job: set the course from the navigation screen.'],g:'you'}];
+let si=0;function gfx(g){if(g==='planet')return`<svg viewBox="-100 -80 200 160" width="100%" height="230"><circle r="52" fill="#b5532b" opacity=".85"/><path d="M-50 -10 Q0 -30 50 -6" stroke="#d98a5b" stroke-width="6" fill="none"/><path d="M-46 22 Q0 6 48 24" stroke="#8a3d22" stroke-width="5" fill="none"/><circle r="70" fill="none" stroke="#5fe3ff" stroke-dasharray="3 6"/><circle cx="70" r="4" fill="#5fe3ff"/></svg>`;
+ if(g==='crew')return`<svg viewBox="0 0 220 175" width="100%" height="230">${[0,1,2,3].map(i=>`<g transform="translate(${30+i*53} 50)"><circle r="16" fill="none" stroke="#5fe3ff"/><path d="M-22 58 Q-22 26 0 26 Q22 26 22 58" fill="none" stroke="#5fe3ff"/><text y="${i%2?92:78}" text-anchor="middle" style="font-size:9px">${['MENSAH','REYES','CASTELLANOS','PARK'][i]}</text></g>`).join('')}<text x="110" y="168" text-anchor="middle" fill="#ffb347">STATUS: NO SIGNAL</text></svg>`;
+ if(g==='route')return`<svg viewBox="-110 -80 220 160" width="100%" height="230"><circle r="6" fill="#ffd27a"/><circle r="40" fill="none" stroke="rgba(95,227,255,.35)"/><circle r="76" fill="none" stroke="rgba(95,227,255,.35)"/><path d="M40 0 A58 55 0 0 1 -76 0" fill="none" stroke="#5fe3ff" stroke-width="2"/><circle cx="40" r="4" fill="#5aa0e6"/><circle cx="-76" r="5" fill="#ff8a4a"/><text x="-76" y="-10" text-anchor="middle">Vesper</text><text x="46" y="-6">Earth</text></svg>`;
+ return`<svg viewBox="0 0 200 160" width="100%" height="230"><rect x="40" y="30" width="120" height="90" fill="none" stroke="#5fe3ff"/><circle cx="100" cy="68" r="16" fill="none" stroke="#5fe3ff"/><path d="M76 120 Q76 94 100 94 Q124 94 124 120" fill="none" stroke="#5fe3ff"/><text x="100" y="145" text-anchor="middle">CREW: 1 · YOU</text></svg>`;}
+function brief(){const s=S[si];$('slide').innerHTML=`<div><div class="k">Slide ${si+1} of ${S.length}</div><h3>${s.h}</h3>${s.p.map(x=>`<p>${x}</p>`).join('')}</div><div class="pic">${gfx(s.g)}</div>`;
+ $('dots').innerHTML=S.map((_,i)=>`<i class="${i===si?'on':''}"></i>`).join('');$('prev').disabled=si===0;$('next').textContent=si===S.length-1?'DONE':'NEXT';}
+$('prev').onclick=()=>{si=Math.max(0,si-1);brief()};$('next').onclick=()=>{si=Math.min(S.length-1,si+1);brief()};brief();
+
+/* ---- POWER TASK: drag cables from bus outputs to loads; science overloads */
+const OUT=[{id:'a',c:'#ff5a6a'},{id:'b',c:'#ffd24a'},{id:'c',c:'#5fe3ff'},{id:'d',c:'#b78cff'}];
+const LOAD=[{id:'life',n:'Life support',kw:3.1,c:'#ff5a6a',ess:1},{id:'sci',n:'Science payload',kw:2.4,c:'#7d8b90'},{id:'avion',n:'Avionics + comms',kw:1.8,c:'#5fe3ff'},{id:'prop',n:'Propulsion',kw:.8,c:'#b78cff'},{id:'light',n:'Lighting',kw:1.2,c:'#ffd24a'}];
+const link={};let drag=null;const board=$('board');
+OUT.forEach((o,i)=>{const d=document.createElement('div');d.className='term l';d.style.top=(30+i*70)+'px';d.innerHTML=`<div class="plug" style="color:${o.c}" data-o="${o.id}"></div><div>BUS ${o.id.toUpperCase()}<small>output</small></div>`;board.appendChild(d);});
+LOAD.forEach((l,i)=>{const d=document.createElement('div');d.className='term r';d.style.top=(16+i*60)+'px';d.innerHTML=`<div class="plug" style="color:${l.c}" data-l="${l.id}"></div><div>${l.n}<small>${l.kw.toFixed(1)} kW${l.ess?' · essential':''}</small></div>`;board.appendChild(d);});
+const ctr=el=>{const r=el.getBoundingClientRect(),b=board.getBoundingClientRect();return[r.left+r.width/2-b.left,r.top+r.height/2-b.top];};
+const cable=(p,q,c)=>{const mx=(p[0]+q[0])/2;return`<path d="M${p[0]} ${p[1]} C${mx} ${p[1]+30},${mx} ${q[1]+30},${q[0]} ${q[1]}" stroke="${c}" stroke-width="5" fill="none" stroke-linecap="round" style="filter:drop-shadow(0 0 5px ${c})"/>`;};
+function draw(mouse){let s='';for(const[o,l]of Object.entries(link)){const O=OUT.find(x=>x.id===o);s+=cable(ctr(board.querySelector(`[data-o="${o}"]`)),ctr(board.querySelector(`[data-l="${l}"]`)),O.c);}
+ if(drag&&mouse)s+=cable(ctr(board.querySelector(`[data-o="${drag}"]`)),mouse,OUT.find(x=>x.id===drag).c);$('wires').innerHTML=s;
+ const kw=Object.values(link).reduce((a,l)=>a+LOAD.find(x=>x.id===l).kw,0);$('kw').textContent=kw.toFixed(1);
+ $('vb').style.height=Math.min(100,kw/10*100)+'%';$('vb').style.background=$('vb').style.boxShadow=kw>7.5?'var(--bad)':'var(--ok)';$('vb').style.boxShadow='0 0 12px '+(kw>7.5?'var(--bad)':'var(--ok)');
+ const need=['life','avion','light','prop'],ok=need.every(n=>Object.values(link).includes(n))&&kw<=7.5;$('brk').disabled=!ok;return kw;}
+board.addEventListener('pointerdown',e=>{const o=e.target.dataset.o;if(!o)return;drag=o;delete link[o];try{board.setPointerCapture(e.pointerId)}catch(_){}draw();});
+board.addEventListener('pointermove',e=>{if(!drag)return;const b=board.getBoundingClientRect();draw([e.clientX-b.left,e.clientY-b.top]);});
+board.addEventListener('pointerup',e=>{if(!drag)return;const el=document.elementFromPoint(e.clientX,e.clientY),l=el&&el.dataset.l;
+ if(l){for(const k in link)if(link[k]===l)delete link[k];link[drag]=l;const kw=draw();
+  if(kw>7.5){$('power').classList.remove('spark');void $('power').offsetWidth;$('power').classList.add('spark');$('pmsg').innerHTML=`<span style="color:var(--bad)">OVERLOAD: ${kw.toFixed(1)} kW is more than the 7.5 kW the battery can give. Unplug something non-essential.</span>`;}
+  else $('pmsg').textContent=$('brk').disabled?'Good. Keep connecting: life support, avionics, lighting and propulsion all need power.':'All essential systems connected within the limit. Hold the breaker to close it.';}
+ drag=null;draw();});
+let ht=null,hv=0;const hold=on=>{clearInterval(ht);if(on&&!$('brk').disabled)ht=setInterval(()=>{hv=Math.min(1,hv+.03);$('hold').style.width=hv*100+'%';if(hv>=1){clearInterval(ht);$('pmsg').innerHTML='<span class="glow">MAIN BUS CLOSED · POWER RESTORED · rooms light up from here outward</span>';$('brk').textContent='BREAKER CLOSED ✓';$('brk').disabled=true;}},30);else if(hv<1){hv=0;$('hold').style.width='0';}};
+$('brk').onpointerdown=()=>hold(1);$('brk').onpointerup=$('brk').onpointerleave=()=>hold(0);
+addEventListener('resize',()=>draw());
+
+/* ---- outside camera: simple procedural feed (solar array + stars) */
+const cv=$('camc'),g=cv.getContext('2d');const stars=[...Array(90)].map(()=>[Math.random()*420,Math.random()*250,Math.random()]);let t=0;
+(function cam(){t+=.004;g.fillStyle='#01040a';g.fillRect(0,0,420,250);stars.forEach(([x,y,b])=>{g.fillStyle=`rgba(220,240,255,${.3+b*.6})`;g.fillRect((x+t*30)%420,y,1.4,1.4);});
+ g.save();g.translate(210,140);g.rotate(Math.sin(t)*.05);g.fillStyle='#8a8f92';g.fillRect(-200,-4,400,8);
+ for(let i=-4;i<4;i++){g.fillStyle='#1b2c55';g.fillRect(i*48+4,-60,44,52);g.fillRect(i*48+4,8,44,52);g.strokeStyle='rgba(140,170,220,.35)';for(let k=0;k<4;k++){g.strokeRect(i*48+4,-60+k*13,44,13);g.strokeRect(i*48+4,8+k*13,44,13);}}
+ g.restore();g.fillStyle='rgba(255,255,255,.04)';for(let y=0;y<250;y+=3)g.fillRect(0,y,420,1);requestAnimationFrame(cam);})();
+</script></body></html>
